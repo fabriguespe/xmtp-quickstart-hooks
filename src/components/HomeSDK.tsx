@@ -11,6 +11,7 @@ import styles from "./Home.module.css";
 export default function HomeSDK() {
 
   const signer = useSigner();
+  const isConnected = !!signer;
   //React SDKs
   const { client, initialize } = useClient();
   const { conversations } = useConversations();
@@ -21,8 +22,21 @@ export default function HomeSDK() {
   const [history, setHistory] = useState(null);
   const { messages } = useMessages( conversation)
   
+  //Stream
+  const [streamedConversations, setStreamedConversations] = useState([]);
+
+  const { error } =useStreamConversations(
+    useCallback((conversation) => {
+      console.log('stream')
+      setStreamedConversations((prev) => [...prev, conversation]);
+    },[],
+  ));
+
+  if (error) {
+    return "An error occurred while streaming conversations";
+  }
+
   //Other
-  const isConnected = !!signer;
 
   //Initialize XMTP
   const initXmtp = (async() => {
@@ -31,6 +45,7 @@ export default function HomeSDK() {
   })
 
   useEffect(() => {
+    console.log(streamedConversations.length)
     async function loadConversation() {
       if(client?.canMessage(PEER_ADDRESS)){
         const convv=await startConversation(PEER_ADDRESS, 'hi')
@@ -44,8 +59,10 @@ export default function HomeSDK() {
       }
     }
     if(!conversation && client)loadConversation()
-    if(messages)console.log('messages',messages.length)
-  }, [signer,conversation,client,messages]);
+    if(messages){
+      console.log('Loaded message history:',messages.length)
+    }
+  }, [streamedConversations,signer,conversation,client,messages]);
   return (
     
     <div className={styles.Home}>

@@ -17,7 +17,7 @@ import { XMTPProvider } from "@xmtp/react-sdk";
 export default function Index() {
   return (
     <XMTPProvider>
-        <HomeSDK/>
+        <Home/>
     </XMTPProvider>
   );
 }
@@ -29,14 +29,14 @@ Now that we have the wrapper we can add a button that will sign our user in with
 
 ```tsx
 {!isConnected &&  (
-<button onClick={initXmtp} className={styles.btnXmtp}>Connect to XMTP</button>
+  <button onClick={initXmtp} className={styles.btnXmtp}>Connect to XMTP</button>
 )}
 ```
 ```tsx
 const initXmtp = (async() => {
-await initialize({ signer });
-const convv=await startConversation(PEER_ADDRESS, 'gm')
-setConversation(convv)
+  await initialize({ signer });
+  const convv=await startConversation(PEER_ADDRESS, 'gm')
+  setConversation(convv)
 })
 ```
 
@@ -50,16 +50,18 @@ Later we are going to load our conversations and we are going to simulate starti
 useEffect(() => {
     async function loadConversation() {
         if(client?.canMessage(PEER_ADDRESS)){
-        const convv=await startConversation(PEER_ADDRESS, 'hi')
-        setConversation(convv)
-        const history = await convv.messages();
-        console.log('history',history.length)
-        setHistory(history);
+          const convv=await startConversation(PEER_ADDRESS, 'hi')
+          setConversation(convv)
+          const history = await convv.messages();
+          console.log('history',history.length)
+          setHistory(history);
         }else{
-        console.log("cant message because is not on the network.");
-        //cant message because is not on the network.
+          console.log("cant message because is not on the network.");
+          //cant message because is not on the network.
         }
     }
     if(!conversation && client)loadConversation()
 }, [conversation,client,messages]);
+```
 
+### Step 4: Listen to conversations
