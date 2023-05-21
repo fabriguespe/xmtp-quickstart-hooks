@@ -2,6 +2,7 @@
 import { ConnectWallet,useSigner} from "@thirdweb-dev/react";
 import React,{ useState,useRef, useEffect} from 'react';
 import { useCallback } from "react";
+import { buildLocalStorageKey, loadKeys, storeKeys, wipeKeys } from "./keys";
 import Chat from "./Chat";
 import {Client, useStreamConversations,useClient,useMessages,useConversations,useStartConversation } from "@xmtp/react-sdk";
 
@@ -46,6 +47,21 @@ export default function HomeSDK() {
     await initialize({ signer });
   })
 
+  //Initialize XMTP
+  const initXmtpWithKeys = (async() => {
+    // create a client using keys returned from getKeys
+    //Use signer wallet from ThirdWeb hook `useSigner`
+    const address = await signer.getAddress();
+    let keys = loadKeys(address);
+    if (!keys) {
+      keys = await Client.getKeys(signer);
+      storeKeys(address, keys);
+    }
+    await initialize({ keys,signer});
+
+  })
+
+
   useEffect(() => {
     console.log(streamedConversations.length)
     async function loadConversation() {
@@ -79,7 +95,7 @@ export default function HomeSDK() {
       {isConnected && !client && (
         <div className={styles.xmtp}>
           <ConnectWallet theme="light" />
-          <button onClick={initXmtp} className={styles.btnXmtp}>Connect to XMTP</button>
+          <button onClick={initXmtpWithKeys} className={styles.btnXmtp}>Connect to XMTP</button>
           {conversations.map((conversation,index) => (
             <div key={index}>
               {conversation?.peerAddress}-{conversation.context?.conversationId}-{JSON.stringify(conversation.context?.metadata)}
