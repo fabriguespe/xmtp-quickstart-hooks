@@ -1,0 +1,32 @@
+{
+  "name": "xmtp-thirdweb",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev  ",
+    "devp": "PORT=3002 next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@thirdweb-dev/react": "^3.11.11",
+    "@thirdweb-dev/sdk": "^3.10.14",
+    "@types/node": "20.1.4",
+    "@types/react": "18.2.6",
+    "@types/react-dom": "18.2.4",
+    "@xmtp/react-sdk": "^1.0.0-preview.28",
+    "@xmtp/xmtp-js": "^9.0.1",
+    "autoprefixer": "10.4.14",
+    "eslint": "8.40.0",
+    "eslint-config-next": "13.4.2",
+    "next": "13.4.2",
+    "postcss": "8.4.23",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-markdown": "^8.0.7",
+    "tailwindcss": "3.3.2",
+    "typescript": "5.0.4",
+    "xmtp-content-type-remote-attachment": "^1.0.6"
+  }
+}
