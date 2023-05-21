@@ -65,3 +65,20 @@ useEffect(() => {
 ```
 
 ### Step 4: Listen to conversations
+
+In your component initialize the hook to listen to conversations
+
+```tsx
+const [streamedConversations, setStreamedConversations] = useState([]);
+
+const { error } =useStreamConversations(
+  useCallback((conversation) => {
+    console.log('stream')
+    setStreamedConversations((prev) => [...prev, conversation]);
+  },[],
+));
+
+if (error) {
+  return "An error occurred while streaming conversations";
+}
+```
