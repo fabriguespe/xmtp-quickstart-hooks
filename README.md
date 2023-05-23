@@ -14,6 +14,7 @@ First we need to initialize XMTP client using as signer our wallet connection of
 import Home from '@/components/Home';
 import { XMTPProvider } from "@xmtp/react-sdk";
 
+
 export default function Index() {
   return (
     <XMTPProvider>
@@ -33,10 +34,13 @@ Now that we have the wrapper we can add a button that will sign our user in with
 )}
 ```
 ```tsx
+
+const clientOptions = {
+   env: 'production'
+}
+
 const initXmtp = (async() => {
-  await initialize({ signer });
-  const convv=await startConversation(PEER_ADDRESS, 'gm')
-  setConversation(convv)
+  await initialize({ signer,options: {clientOptions} });
 })
 ```
 
@@ -115,15 +119,23 @@ Then in our main app we can use them for initiating the client
 ```tsx
 //Initialize XMTP
 const initXmtpWithKeys = (async() => {
-  // create a client using keys returned from getKeys
-  //Use signer wallet from ThirdWeb hook `useSigner`
-  const address = await signer.getAddress();
-  let keys = loadKeys(address);
-  if (!keys) {
-    keys = await Client.getKeys(signer);
-    storeKeys(address, keys);
-  }
-  await initialize({ keys,signer});
+    // create a client using keys returned from getKeys
+    //Use signer wallet from ThirdWeb hook `useSigner`
+    const address = await signer.getAddress();
+    let keys = loadKeys(address);
+    if (!keys) {
+      keys = await Client.getKeys(signer,{
+        ...clientOptions,
+        // we don't need to publish the contact here since it
+        // will happen when we create the client later
+        skipContactPublishing: true,
+        // we can skip persistence on the keystore for this short-lived
+        // instance
+        persistConversations: false
+      });
+      storeKeys(address, keys);
+    }
+    await initialize({ keys,options:clientOptions,signer});
 
-})
+  })
 ```
