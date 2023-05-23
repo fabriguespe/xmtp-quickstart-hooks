@@ -15,7 +15,7 @@
     "@types/node": "20.1.4",
     "@types/react": "18.2.6",
     "@types/react-dom": "18.2.4",
-    "@xmtp/react-sdk": "^1.0.0-preview.28",
+    "@xmtp/react-sdk": "^1.0.0-preview.31",
     "@xmtp/xmtp-js": "^9.0.1",
     "autoprefixer": "10.4.14",
     "eslint": "8.40.0",

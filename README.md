@@ -73,18 +73,18 @@ useEffect(() => {
 In your component initialize the hook to listen to conversations
 
 ```tsx
-const [streamedConversations, setStreamedConversations] = useState([]);
-
-const { error } =useStreamConversations(
-  useCallback((conversation) => {
-    console.log('stream')
-    setStreamedConversations((prev) => [...prev, conversation]);
-  },[],
-));
-
-if (error) {
-  return "An error occurred while streaming conversations";
-}
+const [history, setHistory] = useState(null);
+const { messages } = useMessages( conversation)
+// Stream messages
+const onMessage = useCallback((message) => {
+    setHistory(prevMessages => {
+      const msgsnew = [...prevMessages, message];
+      return msgsnew;
+    });
+  },
+  [],
+);
+useStreamMessages(conversation, onMessage);
 ```
 ### Step 5 (optional): Save keys
 

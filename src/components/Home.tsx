@@ -4,14 +4,15 @@ import React,{ useState,useRef, useEffect} from 'react';
 import { useCallback } from "react";
 import { loadKeys, storeKeys,getEnv } from "./helpers";
 import Chat from "./Chat";
-import {Client, useStreamConversations,useClient,useMessages,useConversations,useStartConversation } from "@xmtp/react-sdk";
+import {Client, useStreamMessages,useClient,useMessages,useConversations,useStartConversation } from "@xmtp/react-sdk";
 
-const PEER_ADDRESS = '0x937C0d4a6294cdfa575de17382c7076b579DC176';
+const PEER_ADDRESS = '0x0AD3A479B31072bc14bDE6AaD601e4cbF13e78a8';
+//gm bot 0x937C0d4a6294cdfa575de17382c7076b579DC176
 import styles from "./Home.module.css";
 const clientOptions = {
    env: getEnv() 
 }
-export default function HomeSDK() {
+export default function Home() {
 
   const signer = useSigner();
   //Other
@@ -26,25 +27,16 @@ export default function HomeSDK() {
   //Message conversation
   const [history, setHistory] = useState(null);
   const { messages } = useMessages( conversation)
-  
-  //Stream
-  const [streamedConversations, setStreamedConversations] = useState<
-    Conversation[]
-  >([]);
-
-  // callback to handle incoming conversations
-  const onConversation = useCallback(
-    (conversation) => {
-      console.log('je')
-      setStreamedConversations((prev) => [...prev, conversation]);
+  // Stream messages
+  const onMessage = useCallback((message) => {
+      setHistory(prevMessages => {
+        const msgsnew = [...prevMessages, message];
+        return msgsnew;
+      });
     },
     [],
   );
-  const { error } = useStreamConversations(onConversation);
-
-  if (error) {
-    return "An error occurred while streaming conversations";
-  }
+  useStreamMessages(conversation, onMessage);
 
 
   //Initialize XMTP
@@ -76,7 +68,6 @@ export default function HomeSDK() {
 
 
   useEffect(() => {
-    console.log(streamedConversations.length)
     async function loadConversation() {
       if(client?.canMessage(PEER_ADDRESS)){
         const convv=await startConversation(PEER_ADDRESS, 'hi')
@@ -93,7 +84,8 @@ export default function HomeSDK() {
     if(messages){
       console.log('Loaded message history:',messages.length)
     }
-  }, [streamedConversations,signer,conversation,client,messages]);
+    console.log
+  }, [signer,conversation,client,messages]);
   return (
     
     <div className={styles.Home}>
