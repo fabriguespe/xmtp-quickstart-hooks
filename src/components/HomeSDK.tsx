@@ -2,16 +2,21 @@
 import { ConnectWallet,useSigner} from "@thirdweb-dev/react";
 import React,{ useState,useRef, useEffect} from 'react';
 import { useCallback } from "react";
-import { buildLocalStorageKey, loadKeys, storeKeys, wipeKeys } from "./keys";
+import { loadKeys, storeKeys,getEnv } from "./helpers";
 import Chat from "./Chat";
 import {Client, useStreamConversations,useClient,useMessages,useConversations,useStartConversation } from "@xmtp/react-sdk";
 
 const PEER_ADDRESS = '0x937C0d4a6294cdfa575de17382c7076b579DC176';
 import styles from "./Home.module.css";
-
+const clientOptions = {
+   env: getEnv() 
+}
 export default function HomeSDK() {
 
   const signer = useSigner();
+  //Other
+  const isConnected = !!signer;
+
   //React SDKs
   const { client, initialize } = useClient();
   const { conversations } = useConversations();
@@ -23,28 +28,28 @@ export default function HomeSDK() {
   const { messages } = useMessages( conversation)
   
   //Stream
-  const [streamedConversations, setStreamedConversations] = useState([]);
+  const [streamedConversations, setStreamedConversations] = useState<
+    Conversation[]
+  >([]);
 
   // callback to handle incoming conversations
-  const onConversation = useCallback((conversation) => {
-      console.log('stream')
+  const onConversation = useCallback(
+    (conversation) => {
+      console.log('je')
       setStreamedConversations((prev) => [...prev, conversation]);
     },
     [],
   );
-  const { error } = useStreamConversations(onConversation)
+  const { error } = useStreamConversations(onConversation);
+
   if (error) {
     return "An error occurred while streaming conversations";
   }
-  //Other
-  const isConnected = !!signer;
+
 
   //Initialize XMTP
   const initXmtp = (async() => {
-    const keys = await client.getKeys(signer);
-    // create a client using keys returned from getKeys
-    //Use signer wallet from ThirdWeb hook `useSigner`
-    await initialize({ signer });
+    await initialize({ signer,options: clientOptions });
   })
 
   //Initialize XMTP
@@ -54,10 +59,18 @@ export default function HomeSDK() {
     const address = await signer.getAddress();
     let keys = loadKeys(address);
     if (!keys) {
-      keys = await Client.getKeys(signer);
+      keys = await Client.getKeys(signer,{
+        ...clientOptions,
+        // we don't need to publish the contact here since it
+        // will happen when we create the client later
+        skipContactPublishing: true,
+        // we can skip persistence on the keystore for this short-lived
+        // instance
+        persistConversations: false
+      });
       storeKeys(address, keys);
     }
-    await initialize({ keys,signer});
+    await initialize({ keys,options:clientOptions,signer});
 
   })
 

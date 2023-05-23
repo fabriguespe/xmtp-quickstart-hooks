@@ -51,7 +51,6 @@ export default function Home() {
   };
 
   useEffect(() => {
-    console.log('je')
     if (xmtpConnected && convRef.current) {
       // Function to stream new messages in the conversation
       const streamMessages = async () => {

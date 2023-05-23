@@ -137,8 +137,10 @@ function Chat({ messageHistory,  conversation }) {
 
   // Function to render a local attachment as an image
   const objectURL = (attachment) => {
-    const blob = new Blob([attachment.data], { type: attachment.mimeType });
-    return <img src={URL.createObjectURL(blob)} width={200} className="imageurl" alt={attachment.filename} />;
+    if(attachment?.data){
+      const blob = new Blob([attachment.data], { type: attachment.mimeType });
+      return <img src={URL.createObjectURL(blob)} width={200} className="imageurl" alt={attachment.filename} />;
+    }
   };
 
   // MessageList component to render the list of messages
