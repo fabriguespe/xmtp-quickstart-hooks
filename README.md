@@ -137,6 +137,6 @@ const initXmtpWithKeys = async () => {
     });
     storeKeys(address, keys);
   }
-  await initialize({ keys, options: clientOptions, signer });
+  await initialize({ keys, options, signer });
 };
 ```

@@ -15,7 +15,7 @@ import {
 
 const PEER_ADDRESS = "0x937C0d4a6294cdfa575de17382c7076b579DC176"; //gm bot
 import styles from "./Home.module.css";
-const clientOptions = {
+const options = {
   env: getEnv(),
 };
 
@@ -45,7 +45,7 @@ export default function Home() {
 
   //Initialize XMTP
   const initXmtp = async () => {
-    await initialize({ signer, options: clientOptions });
+    await initialize({ signer, options });
   };
 
   //Initialize XMTP
@@ -66,7 +66,8 @@ export default function Home() {
       });
       storeKeys(address, keys);
     }
-    await initialize({ keys, options: clientOptions, signer });
+
+    await initialize({ keys, options, signer });
   };
 
   useEffect(() => {
