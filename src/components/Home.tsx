@@ -11,8 +11,6 @@ import {
   useStartConversation,
 } from "@xmtp/react-sdk";
 
-const PEER_ADDRESS = "0x7E0b0363404751346930AF92C80D1fef932Cc48a"; //gm bot
-
 export default function Home() {
   const [signer, setSigner] = useState(null);
   const [address, setAddress] = useState(null);
@@ -42,12 +40,21 @@ export default function Home() {
 
   useEffect(() => {
     async function loadConversation() {
-      if (await canMessage(PEER_ADDRESS)) {
-        const { cachedConversation } = await startConversation(
-          PEER_ADDRESS,
+      let peer_address;
+      if (address == "0x7E0b0363404751346930AF92C80D1fef932Cc48a")
+        peer_address = "0x0AD3A479B31072bc14bDE6AaD601e4cbF13e78a8";
+      else peer_address = "0x7E0b0363404751346930AF92C80D1fef932Cc48a";
+      console.log("new ", address, peer_address);
+      console.log(address, peer_address);
+      if (await canMessage(peer_address)) {
+        const { conversation, cachedConversation } = await startConversation(
+          peer_address,
           "hi",
         );
-        setConversation(cachedConversation);
+        console.log(conversation);
+        setConversation(conversation);
+        const arra = await conversation?.messages();
+        console.log(arra?.length);
       } else {
         console.log("cant message because is not on the network.");
         //cant message because is not on the network.

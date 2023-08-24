@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
 import {
   useStreamMessages,
-  useStreamAllMessages,
   useSendMessage,
   useMessages,
 } from "@xmtp/react-sdk";
+
 import {
   AttachmentCodec,
   RemoteAttachmentCodec,
@@ -192,14 +192,7 @@ function Chat({ conversation, address }) {
 
   const { sendMessage } = useSendMessage();
   const { messages } = useMessages(conversation);
-  //add a callback to the useStreamMessages hook
-  const onMessage = useCallback(
-    (message) => {
-      console.log("Message received:", message);
-    },
-    [conversation],
-  );
-  useStreamMessages(conversation, onMessage);
+  useStreamMessages(conversation);
 
   return (
     <div className={styles.Chat}>
