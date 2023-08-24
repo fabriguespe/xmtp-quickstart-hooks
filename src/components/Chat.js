@@ -1,17 +1,14 @@
-import { useStorageUpload } from "@thirdweb-dev/react";
 import React, { useState } from "react";
-import { useAddress } from "@thirdweb-dev/react";
+import { ethers } from "ethers";
 import {
   AttachmentCodec,
   RemoteAttachmentCodec,
   ContentTypeAttachment,
-  ContentTypeRemoteAttachment
+  ContentTypeRemoteAttachment,
 } from "xmtp-content-type-remote-attachment";
 import styles from "./Chat.module.css";
 
-function Chat({ messageHistory,  conversation }) {
-  const address = useAddress();
-  const { mutateAsync: upload } = useStorageUpload();
+function Chat({ messageHistory, conversation, signer }) {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -48,8 +45,8 @@ function Chat({ messageHistory,  conversation }) {
 
     const attachment = {
       filename: file.name,
-      mimeType: 'image/png',
-      data: imgArray
+      mimeType: "image/png",
+      data: imgArray,
     };
     await conversation.send(attachment, { contentType: ContentTypeAttachment });
   };
@@ -57,7 +54,6 @@ function Chat({ messageHistory,  conversation }) {
   // Function to handle sending a large file attachment
   const handleLargeFile = async (file) => {
     setIsLoading(true);
-    setLoadingText("Uploading to ThirdWeb Storage...");
     const uploadUrl = await upload({
       data: [file],
       options: { uploadWithGatewayUrl: true, uploadWithoutDirectory: true },
@@ -66,11 +62,14 @@ function Chat({ messageHistory,  conversation }) {
 
     const attachment = {
       filename: file.name,
-      mimeType: 'image/png',
-      data: new TextEncoder().encode("hello world")
+      mimeType: "image/png",
+      data: new TextEncoder().encode("hello world"),
     };
 
-    const encryptedAttachment = await RemoteAttachmentCodec.encodeEncrypted(attachment, new AttachmentCodec());
+    const encryptedAttachment = await RemoteAttachmentCodec.encodeEncrypted(
+      attachment,
+      new AttachmentCodec(),
+    );
 
     const remoteAttachment = {
       url: uploadUrl[0],
@@ -99,12 +98,11 @@ function Chat({ messageHistory,  conversation }) {
     const file = event.target.files[0];
     setInputValue(file.name);
     setImage(file);
-    
   };
   // Function to handle dropping a file onto the input field
   const handleFileDrop = (event) => {
     event.preventDefault();
-    console.log(event.dataTransfer.files)
+    console.log(event.dataTransfer.files);
     const file = event.dataTransfer.files[0];
     setInputValue(file.name);
     setImage(file);
@@ -126,27 +124,43 @@ function Chat({ messageHistory,  conversation }) {
 
   // Function to handle the click event on a message
   const handleClick = (message) => {
-    alert('Check the console for the message details');
+    alert("Check the console for the message details");
     console.log(message);
   };
 
   // Function to render a remote attachment URL as an image
   const remoteURL = (attachment) => {
-    return <img src={attachment.url} width={200} className="imageurl" alt={attachment.filename} />;
+    return (
+      <img
+        src={attachment.url}
+        width={200}
+        className="imageurl"
+        alt={attachment.filename}
+      />
+    );
   };
 
   // Function to render a local attachment as an image
   const objectURL = (attachment) => {
-    if(attachment?.data){
+    if (attachment?.data) {
       const blob = new Blob([attachment.data], { type: attachment.mimeType });
-      return <img src={URL.createObjectURL(blob)} width={200} className="imageurl" alt={attachment.filename} />;
+      return (
+        <img
+          src={URL.createObjectURL(blob)}
+          width={200}
+          className="imageurl"
+          alt={attachment.filename}
+        />
+      );
     }
   };
 
   // MessageList component to render the list of messages
   const MessageList = ({ messages }) => {
     // Filter messages by unique id
-    messages = messages.filter((v, i, a) => a.findIndex(t => t.id === v.id) === i);
+    messages = messages.filter(
+      (v, i, a) => a.findIndex((t) => t.id === v.id) === i,
+    );
 
     return (
       <ul className="messageList">
@@ -154,9 +168,10 @@ function Chat({ messageHistory,  conversation }) {
           <li
             key={message.id}
             className="messageItem"
-            title="Click to log this message to the console"
-          >
-            <strong>{message.senderAddress === address ? 'You' : 'Bot'}:</strong>
+            title="Click to log this message to the console">
+            <strong>
+              {message.senderAddress === signer.address ? "You" : "Bot"}:
+            </strong>
             {(() => {
               if (message.contentType.sameAs(ContentTypeRemoteAttachment)) {
                 // Handle ContentTypeRemoteAttachment
@@ -170,7 +185,9 @@ function Chat({ messageHistory,  conversation }) {
               }
             })()}
             <span className="date"> ({message.sent.toLocaleTimeString()})</span>
-            <span className="eyes" onClick={() => handleClick(message)}>👀</span>
+            <span className="eyes" onClick={() => handleClick(message)}>
+              👀
+            </span>
           </li>
         ))}
       </ul>
@@ -185,7 +202,10 @@ function Chat({ messageHistory,  conversation }) {
       <div className={styles.messageContainer}>
         <MessageList messages={messageHistory} />
       </div>
-      <div className={styles.inputContainer} onDrop={handleFileDrop} onDragOver={handleDragOver}>
+      <div
+        className={styles.inputContainer}
+        onDrop={handleFileDrop}
+        onDragOver={handleDragOver}>
         {isLoading ? (
           <div className={styles.inputField}>{loadingText}</div>
         ) : image ? (
@@ -201,9 +221,15 @@ function Chat({ messageHistory,  conversation }) {
           />
         )}
         <button className={styles.sendButton} onClick={triggerFileInput}>
-            📤
+          📤
         </button>
-        <input id="image-upload" type="file" accept="image/*" onChange={handleFileUpload} style={{ display: "none" }} />
+        <input
+          id="image-upload"
+          type="file"
+          accept="image/*"
+          onChange={handleFileUpload}
+          style={{ display: "none" }}
+        />
         <button className={styles.sendButton} onClick={handleSend}>
           &#128073;
         </button>
@@ -213,4 +239,3 @@ function Chat({ messageHistory,  conversation }) {
 }
 
 export default Chat;
-
