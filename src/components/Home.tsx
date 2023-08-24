@@ -6,10 +6,7 @@ import { loadKeys, storeKeys, getEnv } from "./helpers";
 
 import {
   Client,
-  useStreamMessages,
-  useStreamAllMessages,
   useClient,
-  useConversations,
   useCanMessage,
   useStartConversation,
 } from "@xmtp/react-sdk";
@@ -22,33 +19,14 @@ export default function Home() {
   const [isConnected, setIsConnected] = useState(false);
   const { client, initialize } = useClient();
   const { canMessage } = useCanMessage();
-  const { conversations, error, isLoading } = useConversations();
   const { startConversation } = useStartConversation();
-  const [history, setHistory] = useState(null);
   //Conversation
   const [conversation, setConversation] = useState(null);
-  //Messages
-  const [messages, setMessages] = useState(null);
-  //const { messages } = useMessages(conversation); @ry is not working because conversation is null
-
-  //Stream
-  const onMessage = useCallback(
-    (message) => {
-      if (message.conversation.peerAddress !== conversation?.peerAddress)
-        return;
-      setHistory((prev) => [...prev, message]);
-    },
-    [conversation],
-  );
-  useStreamAllMessages(onMessage);
-  //useStreamMessages(conversation, onMessage); // @ry is not working because conversation is null
-
   //Initialize XMTP
   const initXmtpWithKeys = async () => {
     const options = {
       env: getEnv(),
     };
-    console.log(address);
     let keys = loadKeys(address);
     if (!keys) {
       keys = await Client.getKeys(signer, {
@@ -65,21 +43,17 @@ export default function Home() {
   useEffect(() => {
     async function loadConversation() {
       if (await canMessage(PEER_ADDRESS)) {
-        console.log("entra");
-        console.log(conversations);
-        const { conversation } = await startConversation(PEER_ADDRESS, "hi");
-        setConversation(conversation);
-        const history = await conversation.messages();
-        setHistory(history);
+        const { cachedConversation } = await startConversation(
+          PEER_ADDRESS,
+          "hi",
+        );
+        setConversation(cachedConversation);
       } else {
         console.log("cant message because is not on the network.");
         //cant message because is not on the network.
       }
     }
     if (!conversation && client) loadConversation();
-    if (history) {
-      console.log("Loaded message history:", history.length);
-    }
   }, [signer, client]);
 
   const connectWallet = async function () {
@@ -122,12 +96,8 @@ export default function Home() {
           </button>
         </div>
       )}
-      {isConnected && history && address && (
-        <Chat
-          conversation={conversation}
-          messageHistory={history}
-          address={address}
-        />
+      {isConnected && address && conversation && (
+        <Chat conversation={conversation} address={address} />
       )}
     </div>
   );

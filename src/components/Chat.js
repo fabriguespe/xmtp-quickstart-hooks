@@ -1,4 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import {
+  useStreamMessages,
+  useStreamAllMessages,
+  useSendMessage,
+  useMessages,
+} from "@xmtp/react-sdk";
 import {
   AttachmentCodec,
   RemoteAttachmentCodec,
@@ -7,10 +13,11 @@ import {
 } from "xmtp-content-type-remote-attachment";
 import styles from "./Chat.module.css";
 
-function Chat({ messageHistory, conversation, address }) {
+function Chat({ conversation, address }) {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState(false);
   const [inputValue, setInputValue] = useState("");
+  const { sendMessage } = useSendMessage();
   const [image, setImage] = useState(false);
 
   // Function to handle sending a message
@@ -90,7 +97,7 @@ function Chat({ messageHistory, conversation, address }) {
 
   // Function to handle sending a text message
   const onSendMessage = async (value) => {
-    return conversation.send(value);
+    return await sendMessage(conversation, value);
   };
 
   const handleFileUpload = (event) => {
@@ -172,21 +179,8 @@ function Chat({ messageHistory, conversation, address }) {
               {message.senderAddress === address ? "You" : "Bot"}:
             </strong>
             {(() => {
-              if (message.contentType.sameAs(ContentTypeRemoteAttachment)) {
-                // Handle ContentTypeRemoteAttachment
-                return remoteURL(message.content);
-              } else if (message.contentType.sameAs(ContentTypeAttachment)) {
-                // Handle ContentTypeAttachment
-                return objectURL(message.content);
-              } else {
-                // Handle other content types (e.g., text messages)
-                return <span>{message.content}</span>;
-              }
+              return <span>{message.content}</span>;
             })()}
-            <span className="date"> ({message.sent.toLocaleTimeString()})</span>
-            <span className="eyes" onClick={() => handleClick(message)}>
-              👀
-            </span>
           </li>
         ))}
       </ul>
@@ -196,10 +190,13 @@ function Chat({ messageHistory, conversation, address }) {
   const triggerFileInput = () => {
     document.getElementById("image-upload").click();
   };
+
+  const { messages } = useMessages(conversation);
+  useStreamMessages(conversation);
   return (
     <div className={styles.Chat}>
       <div className={styles.messageContainer}>
-        <MessageList messages={messageHistory} />
+        <MessageList messages={messages} />
       </div>
       <div
         className={styles.inputContainer}
