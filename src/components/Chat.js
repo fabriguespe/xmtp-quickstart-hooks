@@ -17,7 +17,6 @@ function Chat({ conversation, address }) {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState(false);
   const [inputValue, setInputValue] = useState("");
-  const { sendMessage } = useSendMessage();
   const [image, setImage] = useState(false);
 
   // Function to handle sending a message
@@ -191,8 +190,17 @@ function Chat({ conversation, address }) {
     document.getElementById("image-upload").click();
   };
 
+  const { sendMessage } = useSendMessage();
   const { messages } = useMessages(conversation);
-  useStreamMessages(conversation);
+  //add a callback to the useStreamMessages hook
+  const onMessage = useCallback(
+    (message) => {
+      console.log("Message received:", message);
+    },
+    [conversation],
+  );
+  useStreamMessages(conversation, onMessage);
+
   return (
     <div className={styles.Chat}>
       <div className={styles.messageContainer}>
