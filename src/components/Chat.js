@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { ethers } from "ethers";
 import {
   AttachmentCodec,
   RemoteAttachmentCodec,
@@ -8,7 +7,7 @@ import {
 } from "xmtp-content-type-remote-attachment";
 import styles from "./Chat.module.css";
 
-function Chat({ messageHistory, conversation, signer }) {
+function Chat({ messageHistory, conversation, address }) {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState(false);
   const [inputValue, setInputValue] = useState("");
@@ -132,10 +131,10 @@ function Chat({ messageHistory, conversation, signer }) {
   const remoteURL = (attachment) => {
     return (
       <img
-        src={attachment.url}
+        src={attachment?.url}
         width={200}
         className="imageurl"
-        alt={attachment.filename}
+        alt={attachment?.filename}
       />
     );
   };
@@ -143,13 +142,13 @@ function Chat({ messageHistory, conversation, signer }) {
   // Function to render a local attachment as an image
   const objectURL = (attachment) => {
     if (attachment?.data) {
-      const blob = new Blob([attachment.data], { type: attachment.mimeType });
+      const blob = new Blob([attachment?.data], { type: attachment?.mimeType });
       return (
         <img
           src={URL.createObjectURL(blob)}
           width={200}
           className="imageurl"
-          alt={attachment.filename}
+          alt={attachment?.filename}
         />
       );
     }
@@ -170,7 +169,7 @@ function Chat({ messageHistory, conversation, signer }) {
             className="messageItem"
             title="Click to log this message to the console">
             <strong>
-              {message.senderAddress === signer.address ? "You" : "Bot"}:
+              {message.senderAddress === address ? "You" : "Bot"}:
             </strong>
             {(() => {
               if (message.contentType.sameAs(ContentTypeRemoteAttachment)) {
