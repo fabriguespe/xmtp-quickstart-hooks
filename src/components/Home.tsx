@@ -26,19 +26,22 @@ export default function Home() {
   const { startConversation } = useStartConversation();
   const [history, setHistory] = useState(null);
   //Conversation
-  const [conversation, setConversation] = useState(null); // Conditional use of useMessages based on conversation
+  const [conversation, setConversation] = useState(null);
   //Messages
   const [messages, setMessages] = useState(null);
   //const { messages } = useMessages(conversation); @ry is not working because conversation is null
 
   //Stream
-  const onMessage = useCallback((message) => {
-    if (message.conversation.peerAddress !== conversation?.peerAddress) return;
-    setHistory((prev) => [...prev, message]);
-  }, []);
+  const onMessage = useCallback(
+    (message) => {
+      if (message.conversation.peerAddress !== conversation?.peerAddress)
+        return;
+      setHistory((prev) => [...prev, message]);
+    },
+    [conversation],
+  );
   useStreamAllMessages(onMessage);
-
-  // useStreamMessages(conversation, onMessage); @ry is not working because conversation is null
+  //useStreamMessages(conversation, onMessage); // @ry is not working because conversation is null
 
   //Initialize XMTP
   const initXmtpWithKeys = async () => {
@@ -64,10 +67,9 @@ export default function Home() {
       if (await canMessage(PEER_ADDRESS)) {
         console.log("entra");
         console.log(conversations);
-        const conversation = await startConversation(PEER_ADDRESS, "hi");
-        setConversation(conversation.conversation); //@ry the conversation is actually the conversation.conversation ?
-        console.log(conversation.conversation);
-        const history = await conversation.conversation.messages();
+        const { conversation } = await startConversation(PEER_ADDRESS, "hi");
+        setConversation(conversation);
+        const history = await conversation.messages();
         setHistory(history);
       } else {
         console.log("cant message because is not on the network.");
@@ -78,7 +80,7 @@ export default function Home() {
     if (history) {
       console.log("Loaded message history:", history.length);
     }
-  }, [signer, conversation, client]);
+  }, [signer, client]);
 
   const connectWallet = async function () {
     // Check if the ethereum object exists on the window object
