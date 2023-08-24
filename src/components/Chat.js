@@ -6,12 +6,17 @@ import {
   ContentTypeRemoteAttachment,
 } from "xmtp-content-type-remote-attachment";
 import styles from "./Chat.module.css";
+import { Messages } from "@xmtp/react-components";
+import { useMessages, useStreamMessages } from "@xmtp/react-sdk";
 
 function Chat({ messageHistory, conversation, address }) {
   const [isLoading, setIsLoading] = useState(false);
   const [loadingText, setLoadingText] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [image, setImage] = useState(false);
+
+  useStreamMessages(conversation);
+  const { messages, isLoading: messagesLoading } = useMessages(conversation);
 
   // Function to handle sending a message
   const handleSend = async () => {
@@ -162,34 +167,40 @@ function Chat({ messageHistory, conversation, address }) {
     );
 
     return (
-      <ul className="messageList">
-        {messages.map((message, index) => (
-          <li
-            key={message.id}
-            className="messageItem"
-            title="Click to log this message to the console">
-            <strong>
-              {message.senderAddress === address ? "You" : "Bot"}:
-            </strong>
-            {(() => {
-              if (message.contentType.sameAs(ContentTypeRemoteAttachment)) {
-                // Handle ContentTypeRemoteAttachment
-                return remoteURL(message.content);
-              } else if (message.contentType.sameAs(ContentTypeAttachment)) {
-                // Handle ContentTypeAttachment
-                return objectURL(message.content);
-              } else {
-                // Handle other content types (e.g., text messages)
-                return <span>{message.content}</span>;
-              }
-            })()}
-            <span className="date"> ({message.sent.toLocaleTimeString()})</span>
-            <span className="eyes" onClick={() => handleClick(message)}>
-              👀
-            </span>
-          </li>
-        ))}
-      </ul>
+      // <ul className="messageList">
+      //   {messages.map((message, index) => (
+      //     <li
+      //       key={message.id}
+      //       className="messageItem"
+      //       title="Click to log this message to the console">
+      //       <strong>
+      //         {message.senderAddress === address ? "You" : "Bot"}:
+      //       </strong>
+      //       {(() => {
+      //         if (message.contentType.sameAs(ContentTypeRemoteAttachment)) {
+      //           // Handle ContentTypeRemoteAttachment
+      //           return remoteURL(message.content);
+      //         } else if (message.contentType.sameAs(ContentTypeAttachment)) {
+      //           // Handle ContentTypeAttachment
+      //           return objectURL(message.content);
+      //         } else {
+      //           // Handle other content types (e.g., text messages)
+      //           return <span>{message.content}</span>;
+      //         }
+      //       })()}
+      //       <span className="date"> ({message.sent.toLocaleTimeString()})</span>
+      //       <span className="eyes" onClick={() => handleClick(message)}>
+      //         👀
+      //       </span>
+      //     </li>
+      //   ))}
+      // </ul>
+      <Messages
+        conversation={conversation}
+        isLoading={isLoading}
+        messages={messages.filter((message) => message.content !== undefined)}
+        clientAddress={address}
+      />
     );
   };
 
@@ -199,7 +210,7 @@ function Chat({ messageHistory, conversation, address }) {
   return (
     <div className={styles.Chat}>
       <div className={styles.messageContainer}>
-        <MessageList messages={messageHistory} />
+        <MessageList messages={messages} />
       </div>
       <div
         className={styles.inputContainer}
