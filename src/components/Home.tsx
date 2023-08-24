@@ -10,6 +10,7 @@ import {
   useCanMessage,
   useStartConversation,
 } from "@xmtp/react-sdk";
+const PEER_ADDRESS = "0x7E0b0363404751346930AF92C80D1fef932Cc48a"; //gm bot
 
 export default function Home() {
   const [signer, setSigner] = useState(null);
@@ -40,15 +41,15 @@ export default function Home() {
 
   useEffect(() => {
     async function loadConversation() {
-      let peer_address;
+      /*let peer_address;
       if (address == "0x7E0b0363404751346930AF92C80D1fef932Cc48a")
         peer_address = "0x0AD3A479B31072bc14bDE6AaD601e4cbF13e78a8";
-      else peer_address = "0x7E0b0363404751346930AF92C80D1fef932Cc48a";
-      console.log("new ", address, peer_address);
-      console.log(address, peer_address);
-      if (await canMessage(peer_address)) {
+      else peer_address = "0x7E0b0363404751346930AF92C80D1fef932Cc48a";*/
+      console.log("new ", address, PEER_ADDRESS);
+      console.log(address, PEER_ADDRESS);
+      if (await canMessage(PEER_ADDRESS)) {
         const { conversation, cachedConversation } = await startConversation(
-          peer_address,
+          PEER_ADDRESS,
           "hi",
         );
         console.log(conversation);

@@ -175,10 +175,14 @@ function Chat({ conversation, address }) {
             className="messageItem"
             title="Click to log this message to the console">
             <strong>
-              {message.senderAddress === address ? "You" : "Bot"}:
+              {message.senderAddress === address ? "You" : "Other"}:
             </strong>
             {(() => {
-              return <span>{message.content}</span>;
+              return (
+                <span>
+                  {message.content}-{message.xmtpID}
+                </span>
+              );
             })()}
           </li>
         ))}
