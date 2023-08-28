@@ -10,6 +10,7 @@ import {
   useCanMessage,
   useStartConversation,
 } from "@xmtp/react-sdk";
+
 const PEER_ADDRESS = "0x7E0b0363404751346930AF92C80D1fef932Cc48a"; //gm bot
 
 export default function Home() {
