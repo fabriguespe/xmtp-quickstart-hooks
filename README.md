@@ -139,7 +139,7 @@ const initXmtpWithKeys = async () => {
   let keys = loadKeys(address);
   if (!keys) {
     keys = await Client.getKeys(signer, {
-      ...clientOptions,
+      ...options,
       // we don't need to publish the contact here since it
       // will happen when we create the client later
       skipContactPublishing: true,

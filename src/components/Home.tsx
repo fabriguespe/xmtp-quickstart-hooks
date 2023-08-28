@@ -1,3 +1,5 @@
+/* eslint-disable */
+// @ts-ignore
 import React, { useState, useEffect, useCallback } from "react";
 import Chat from "./Chat";
 import styles from "./Home.module.css";
@@ -11,8 +13,12 @@ import {
   useStartConversation,
 } from "@xmtp/react-sdk";
 
-const PEER_ADDRESS = "0x7E0b0363404751346930AF92C80D1fef932Cc48a"; //gm bot
-
+const PEER_ADDRESS = "0x0AD3A479B31072bc14bDE6AaD601e4cbF13e78a8"; //gm bot
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
 export default function Home() {
   const [signer, setSigner] = useState(null);
   const [address, setAddress] = useState(null);
@@ -30,7 +36,7 @@ export default function Home() {
     let keys = loadKeys(address);
     if (!keys) {
       keys = await Client.getKeys(signer, {
-        options,
+        ...options,
         skipContactPublishing: true,
         persistConversations: false,
       });
@@ -53,7 +59,6 @@ export default function Home() {
           PEER_ADDRESS,
           "hi",
         );
-        console.log(conversation);
         setConversation(conversation);
         const arra = await conversation?.messages();
         console.log(arra?.length);
@@ -67,10 +72,10 @@ export default function Home() {
 
   const connectWallet = async function () {
     // Check if the ethereum object exists on the window object
-    if (typeof window.ethereum !== "undefined") {
+    if (typeof window?.ethereum !== "undefined") {
       try {
         // Request access to the user's Ethereum accounts
-        await window.ethereum.enable();
+        await window?.ethereum.enable();
 
         // Instantiate a new ethers provider with Metamask
         const provider = new ethers.providers.Web3Provider(window.ethereum);
