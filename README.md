@@ -50,52 +50,52 @@ If you get into issues with `Buffer` and `polyfills` check out the fix below:
 
 4. Update config files.
 
-   - Webpack: `vue.config.js` or `webpack.config.js`:
+- Webpack: `vue.config.js` or `webpack.config.js`:
 
-     ```jsx
-     const webpack = require("webpack");
+  ```jsx
+  const webpack = require("webpack");
 
-     module.exports = {
-       configureWebpack: {
-         plugins: [
-           new webpack.ProvidePlugin({
-             Buffer: ["buffer", "Buffer"],
-           }),
-         ],
-       },
-       transpileDependencies: true,
-     };
-     ```
+  module.exports = {
+    configureWebpack: {
+      plugins: [
+        new webpack.ProvidePlugin({
+          Buffer: ["buffer", "Buffer"],
+        }),
+      ],
+    },
+    transpileDependencies: true,
+  };
+  ```
 
-   - Vite: `vite.config.js`:
+- Vite: `vite.config.js`:
 
-     ```jsx
-     import { defineConfig } from "vite";
-     import { Buffer } from "buffer";
+  ```jsx
+  import { defineConfig } from "vite";
+  import { Buffer } from "buffer";
 
-     export default defineConfig({
-       /**/
-       define: {
-         global: {
-           Buffer: Buffer,
-         },
-       },
-       /**/
-     });
-     ```
+  export default defineConfig({
+    /**/
+    define: {
+      global: {
+        Buffer: Buffer,
+      },
+    },
+    /**/
+  });
+  ```
 
-   - NuxtJS: `nuxt.config.js`:
+- NuxtJS: `nuxt.config.js`:
 
-     ```tsx
-     export default {
-       build: {
-         extend(config, { isClient }) {
-           if (isClient) {
-             config.node = {
-               Buffer: true,
-             };
-           }
-         },
-       },
-     };
-     ```
+  ```tsx
+  export default {
+    build: {
+      extend(config, { isClient }) {
+        if (isClient) {
+          config.node = {
+            Buffer: true,
+          };
+        }
+      },
+    },
+  };
+  ```
