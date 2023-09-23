@@ -1,7 +1,7 @@
-import Home from "@/components/Home";
+import Home from "./Home";
 import { XMTPProvider } from "@xmtp/react-sdk";
 
-export default function Index() {
+export function UInbox() {
   return (
     <XMTPProvider>
       <Home />
