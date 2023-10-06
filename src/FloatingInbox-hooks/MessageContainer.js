@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useRef, useEffect } from "react";
-import styled from "styled-components";
 import { MessageInput } from "./MessageInput";
 import {
   useMessages,
@@ -8,18 +7,31 @@ import {
 } from "@xmtp/react-sdk";
 import MessageItem from "./MessageItem";
 
-export const MessageContainer = ({
-  conversation,
-  client,
-  searchTerm,
-  selectConversation,
-}) => {
+const styles = {
+  messagesContainer: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
+    height: "100%",
+  },
+  messagesList: {
+    paddingLeft: "10px",
+    paddingRight: "10px",
+    margin: "0px",
+    alignItems: "flex-start",
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "column",
+    overflowY: "auto",
+  },
+};
+
+export const MessageContainer = ({ conversation, client }) => {
   const messagesEndRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
   const { messages } = useMessages(conversation);
   const [streamedMessages, setStreamedMessages] = useState([]);
 
-  // callback to handle incoming messages
   const onMessage = useCallback(
     (message) => {
       setStreamedMessages((prev) => [...prev, message]);
@@ -41,30 +53,21 @@ export const MessageContainer = ({
     }
     if (conversation && conversation.peerAddress) {
       await sendMessage(conversation, newMessage);
-    } else if (conversation) {
-      const conv = await client.conversations.newConversation(searchTerm);
-      selectConversation(conv);
-      await sendMessage(conversation, newMessage);
     }
   };
 
-  const scrollToLatestMessage = () => {
-    const element = messagesEndRef.current;
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
-  useEffect(scrollToLatestMessage, [messages]);
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   return (
-    <MessagesContainer>
+    <div style={styles.messagesContainer}>
       {isLoading ? (
         <small className="loading">Loading messages...</small>
       ) : (
         <>
-          <MessagesList>
-            {messages.map((message) => {
+          <ul style={styles.messagesList}>
+            {messages.slice().map((message) => {
               return (
                 <MessageItem
                   key={message.id}
@@ -75,7 +78,7 @@ export const MessageContainer = ({
               );
             })}
             <div ref={messagesEndRef} />
-          </MessagesList>
+          </ul>
           <MessageInput
             onSendMessage={(msg) => {
               handleSendMessage(msg);
@@ -83,24 +86,6 @@ export const MessageContainer = ({
           />
         </>
       )}
-    </MessagesContainer>
+    </div>
   );
 };
-
-const MessagesContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100%;
-`;
-
-const MessagesList = styled.ul`
-  padding-left: 10px;
-  padding-right: 10px;
-  margin: 0px;
-  align-items: flex-start;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-`;

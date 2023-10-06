@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { UInbox } from "./UInbox-hooks";
+import { FloatingInbox } from "./FloatingInbox-hooks";
 import styled from "styled-components";
 import { ethers } from "ethers";
 
@@ -110,7 +110,7 @@ const InboxPage = () => {
         </ButtonStyled>
       </section>
 
-      <UInbox env={process.env.REACT_APP_XMTP_ENV} wallet={signer} />
+      <FloatingInbox env={process.env.REACT_APP_XMTP_ENV} wallet={signer} />
     </HomePageWrapper>
   );
 };
