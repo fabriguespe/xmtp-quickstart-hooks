@@ -42,37 +42,37 @@ export const ConversationContainer = ({
       border: "0px solid #ccc",
     },
   };
-
   const isValidEthereumAddress = (address) => {
     return /^0x[a-fA-F0-9]{40}$/.test(address);
   };
 
   const handleSearchChange = async (e) => {
     setSearchTerm(e.target.value);
+    console.log("handleSearchChange", e.target.value);
     setMessage("Searching...");
     const addressInput = e.target.value;
     const isEthDomain = /\.eth$/.test(addressInput);
-    if (!isEthDomain) {
-      return;
-    }
-    setLoadingResolve(true);
-    try {
-      const provider = new ethers.providers.CloudflareProvider();
-      const resolvedAddress = await provider.resolveName(addressInput);
-
-      if (resolvedAddress && isValidEthereumAddress(resolvedAddress)) {
-        processEthereumAddress(resolvedAddress);
-        setSearchTerm(resolvedAddress); // <-- Add this line
-      } else {
-        setMessage("Invalid Ethereum address");
-        setPeerAddress(null);
-        //setCanMessage(false);
+    let resolvedAddress = addressInput;
+    if (isEthDomain) {
+      setLoadingResolve(true);
+      try {
+        const provider = new ethers.providers.CloudflareProvider();
+        resolvedAddress = await provider.resolveName(resolvedAddress);
+      } catch (error) {
+        console.log(error);
+        setMessage("Error resolving address");
+      } finally {
+        setLoadingResolve(false);
       }
-    } catch (error) {
-      console.log(error);
-      setMessage("Error resolving address");
-    } finally {
-      setLoadingResolve(false);
+    }
+    console.log("resolvedAddress", resolvedAddress);
+    if (resolvedAddress && isValidEthereumAddress(resolvedAddress)) {
+      processEthereumAddress(resolvedAddress);
+      setSearchTerm(resolvedAddress); // <-- Add this line
+    } else {
+      setMessage("Invalid Ethereum address");
+      setPeerAddress(null);
+      //setCanMessage(false);
     }
   };
 
