@@ -97,14 +97,14 @@ const InboxPage = () => {
       <section className="App-section">
         <ButtonStyled
           className="home-button"
-          onClick={() => window.uinbox.open()}
+          onClick={() => window.FloatingInbox.open()}
         >
           Open
         </ButtonStyled>
         <ButtonStyled
           className="home-button"
           style={{ marginLeft: 10 }}
-          onClick={() => window.uinbox.close()}
+          onClick={() => window.FloatingInbox.close()}
         >
           Close
         </ButtonStyled>
