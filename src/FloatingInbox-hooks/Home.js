@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import { Client, useClient } from "@xmtp/react-sdk";
 import { ConversationContainer } from "./ConversationContainer";
 
-export default function Home({ wallet, env }) {
+export default function Home({ wallet, env, isPWA = false }) {
   const initialIsOpen =
     localStorage.getItem("isWidgetOpen") === "true" || false;
   const initialIsOnNetwork =
@@ -39,12 +39,12 @@ export default function Home({ wallet, env }) {
       transition: "transform 0.3s ease",
       padding: "5px",
     },
-    Button: {
-      position: "fixed",
-      bottom: "70px",
-      right: "20px",
-      width: "300px",
-      height: "400px",
+    uContainer: {
+      position: isPWA == true ? "relative" : "fixed",
+      bottom: isPWA == true ? "0px" : "70px",
+      right: isPWA == true ? "0px" : "20px",
+      width: isPWA == true ? "100%" : "300px",
+      height: isPWA == true ? "100vh" : "400px",
       border: "1px solid #ccc",
       backgroundColor: "#f9f9f9",
       borderRadius: "10px",
@@ -60,7 +60,7 @@ export default function Home({ wallet, env }) {
       left: "5px",
       background: "transparent",
       border: "none",
-      fontSize: "10px",
+      fontSize: isPWA == true ? "20px" : "10px",
       cursor: "pointer",
     },
     widgetHeader: {
@@ -78,11 +78,13 @@ export default function Home({ wallet, env }) {
     conversationHeaderH4: {
       margin: "0px",
       padding: "4px",
+      fontSize: isPWA == true ? "20px" : "14px", // Increased font size
     },
     backButton: {
       border: "0px",
       background: "transparent",
       cursor: "pointer",
+      fontSize: isPWA == true ? "20px" : "14px", // Increased font size
     },
     widgetContent: {
       flexGrow: 1,
@@ -102,12 +104,13 @@ export default function Home({ wallet, env }) {
       color: "#000",
       justifyContent: "center",
       border: "1px solid grey",
-      padding: "10px",
+      padding: isPWA == true ? "20px" : "10px",
       borderRadius: "5px",
+      fontSize: isPWA == true ? "20px" : "14px", // Increased font size
     },
     widgetFooter: {
       padding: "5px",
-      fontSize: "12px",
+      fontSize: isPWA == true ? "20px" : "12px",
       textAlign: "center",
       display: "flex",
       alignItems: "center",
@@ -166,7 +169,7 @@ export default function Home({ wallet, env }) {
   //Initialize XMTP
   const initXmtpWithKeys = async () => {
     const options = {
-      env: getEnv(),
+      env: env ? env : getEnv(),
     };
     const address = await getAddress(signer);
     let keys = loadKeys(address);
@@ -206,18 +209,20 @@ export default function Home({ wallet, env }) {
 
   return (
     <>
-      <div
-        style={styles.floatingLogo}
-        onClick={isOpen ? closeWidget : openWidget}
-        className={
-          "FloatingInbox " +
-          (isOpen ? "spin-clockwise" : "spin-counter-clockwise")
-        }>
-        <SVGLogo parentClass={"FloatingInbox"} />
-      </div>
+      {!isPWA && (
+        <div
+          style={styles.floatingLogo}
+          onClick={isOpen ? closeWidget : openWidget}
+          className={
+            "FloatingInbox " +
+            (isOpen ? "spin-clockwise" : "spin-counter-clockwise")
+          }>
+          <SVGLogo parentClass={"FloatingInbox"} />
+        </div>
+      )}
       {isOpen && (
         <div
-          style={styles.Button}
+          style={styles.uContainer}
           className={"FloatingInbox" + (isOnNetwork ? "expanded" : "")}>
           {isConnected && (
             <button style={styles.logoutBtn} onClick={handleLogout}>
@@ -257,6 +262,7 @@ export default function Home({ wallet, env }) {
             )}
             {isConnected && isOnNetwork && client && (
               <ConversationContainer
+                isPWA={isPWA}
                 client={client}
                 selectedConversation={selectedConversation}
                 setSelectedConversation={setSelectedConversation}

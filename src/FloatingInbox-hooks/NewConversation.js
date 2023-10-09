@@ -12,7 +12,7 @@ const styles = {
 };
 
 export const NewConversation = ({ selectConversation, peerAddress }) => {
-  const { startConversation } = useStartConversation(); // Use the relevant function from your SDK
+  const { startConversation } = useStartConversation();
 
   const handleSendMessage = useCallback(
     async (message) => {

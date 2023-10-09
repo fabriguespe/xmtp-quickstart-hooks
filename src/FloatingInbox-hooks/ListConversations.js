@@ -6,6 +6,7 @@ export const ListConversations = ({
   searchTerm,
   selectConversation,
   onConversationFound,
+  isPWA = false,
 }) => {
   const { conversations } = useConversations();
   const [streamedConversations, setStreamedConversations] = useState([]);
@@ -23,28 +24,29 @@ export const ListConversations = ({
       ":hover": {
         backgroundColor: "lightblue",
       },
+      padding: isPWA == true ? "15px" : "10px",
     },
     conversationDetails: {
       display: "flex",
       flexDirection: "column",
       alignItems: "flex-start",
       width: "75%",
-      marginLeft: "10px",
+      marginLeft: isPWA == true ? "15px" : "10px",
       overflow: "hidden",
     },
     conversationName: {
-      fontSize: "16px",
+      fontSize: isPWA == true ? "20px" : "16px",
       fontWeight: "bold",
     },
     messagePreview: {
-      fontSize: "14px",
+      fontSize: isPWA == true ? "18px" : "14px",
       color: "#666",
       whiteSpace: "nowrap",
       overflow: "hidden",
       textOverflow: "ellipsis",
     },
     conversationTimestamp: {
-      fontSize: "12px",
+      fontSize: isPWA == true ? "16px" : "12px",
       color: "#999",
       width: "25%",
       textAlign: "right",
@@ -63,6 +65,7 @@ export const ListConversations = ({
       conversation?.peerAddress !== client.address,
   );
   if (filteredConversations.length > 0) {
+    console.log("filteredConversations", filteredConversations.length);
     onConversationFound(true);
   }
   const onConversation = useCallback((conversation: Conversation) => {

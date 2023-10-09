@@ -1,10 +1,10 @@
 import Home from "./Home";
 import { XMTPProvider } from "@xmtp/react-sdk";
 
-export function FloatingInbox() {
+export function FloatingInbox({ isPWA = false }) {
   return (
     <XMTPProvider>
-      <Home />
+      <Home isPWA={isPWA} />
     </XMTPProvider>
   );
 }

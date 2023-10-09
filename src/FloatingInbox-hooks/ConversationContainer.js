@@ -9,6 +9,7 @@ export const ConversationContainer = ({
   client,
   selectedConversation,
   setSelectedConversation,
+  isPWA = false,
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [peerAddress, setPeerAddress] = useState("");
@@ -16,11 +17,13 @@ export const ConversationContainer = ({
   const [loading, setLoading] = useState(false);
   const [loadingResolve, setLoadingResolve] = useState(false);
   const { canMessage } = useCanMessage();
+  const [createNew, setCreateNew] = useState(false);
   const [conversationFound, setConversationFound] = useState(false);
 
   const styles = {
     conversations: {
       height: "100%",
+      fontSize: isPWA == true ? "1.2em" : ".9em", // Increased font size
     },
     conversationList: {
       overflowY: "auto",
@@ -29,17 +32,22 @@ export const ConversationContainer = ({
       listStyle: "none",
       overflowY: "scroll",
     },
+    smallLabel: {
+      fontSize: isPWA == true ? "1.5em" : ".9em", // Increased font size
+    },
     createNewButton: {
       border: "1px",
       padding: "5px",
       borderRadius: "5px",
       marginTop: "10px",
+      fontSize: isPWA == true ? "1.2em" : ".9em", // Increased font size
     },
     peerAddressInput: {
       width: "100%",
-      padding: "10px",
+      padding: "10px", // <-- Add this line
       boxSizing: "border-box",
       border: "0px solid #ccc",
+      fontSize: isPWA == true ? "1.2em" : ".9em", // Increased font size
     },
   };
   const isValidEthereumAddress = (address) => {
@@ -47,6 +55,8 @@ export const ConversationContainer = ({
   };
 
   const handleSearchChange = async (e) => {
+    setCreateNew(false);
+    setConversationFound(false);
     setSearchTerm(e.target.value);
     console.log("handleSearchChange", e.target.value);
     setMessage("Searching...");
@@ -61,6 +71,7 @@ export const ConversationContainer = ({
       } catch (error) {
         console.log(error);
         setMessage("Error resolving address");
+        setCreateNew(false);
       } finally {
         setLoadingResolve(false);
       }
@@ -72,27 +83,34 @@ export const ConversationContainer = ({
     } else {
       setMessage("Invalid Ethereum address");
       setPeerAddress(null);
+      setCreateNew(false);
       //setCanMessage(false);
     }
   };
 
   const processEthereumAddress = async (address) => {
     setPeerAddress(address);
+    console.log(address);
     if (address === client.address) {
       setMessage("No self messaging allowed");
+      setCreateNew(false);
       // setCanMessage(false);
     } else {
       const canMessageStatus = await client?.canMessage(address);
+      console.log(canMessageStatus);
       if (canMessageStatus) {
         setPeerAddress(address);
         // setCanMessage(true);
         setMessage("Address is on the network ✅");
+        setCreateNew(true);
       } else {
         //  setCanMessage(false);
         setMessage("Address is not on the network ❌");
+        setCreateNew(false);
       }
     }
   };
+
   if (loading) {
     return <div>Loading...</div>;
   }
@@ -109,16 +127,18 @@ export const ConversationContainer = ({
           />
           {loadingResolve && searchTerm && <small>Resolving address...</small>}
           <ListConversations
+            isPWA={isPWA}
             searchTerm={searchTerm}
             selectConversation={setSelectedConversation}
             client={client}
             onConversationFound={(state) => {
               setConversationFound(state);
+              if (state == true) setCreateNew(false);
             }}
           />
-          {peerAddress && canMessage && !conversationFound && (
+          {message && conversationFound !== true && <small>{message}</small>}
+          {peerAddress && createNew && canMessage && (
             <>
-              {message && <small>{message}</small>}
               <button
                 style={styles.createNewButton}
                 onClick={() => {
@@ -134,11 +154,13 @@ export const ConversationContainer = ({
         <>
           {selectedConversation.id ? (
             <MessageContainer
+              isPWA={isPWA}
               client={client}
               conversation={selectedConversation}
             />
           ) : (
             <NewConversation
+              isPWA={isPWA}
               selectConversation={setSelectedConversation}
               peerAddress={peerAddress}
             />
