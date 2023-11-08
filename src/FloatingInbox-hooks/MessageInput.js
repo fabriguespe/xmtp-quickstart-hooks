@@ -13,13 +13,16 @@ export const MessageInput = ({
       paddingLeft: "10px",
       paddingRight: "10px",
       flexWrap: "wrap",
+      paddingBottom: "10px",
     },
     messageInputField: {
       flexGrow: 1,
       padding: "5px",
       border: "1px solid #ccc",
       borderRadius: "5px",
-      fontSize: isPWA == true ? "1.2em" : ".9em", // Increased font size
+      fontSize: isPWA == true ? "1.2em" : ".9em",
+      width: isPWA == true ? "82%" : "",
+      outline: "none",
     },
     sendButton: {
       padding: "5px 10px",
@@ -27,10 +30,12 @@ export const MessageInput = ({
       border: "1px solid #ccc",
       cursor: "pointer",
       borderRadius: "5px",
-      display: "flex",
-      alignItems: "center",
       textAlign: "center",
-      fontSize: isPWA == true ? "1.2em" : ".9em", // Increased font size
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      fontSize: isPWA == true ? "1.0em" : ".6em",
+      width: isPWA == true ? "12%" : "",
     },
   };
   const handleInputChange = (event) => {
@@ -58,7 +63,7 @@ export const MessageInput = ({
           onSendMessage(newMessage);
           setNewMessage("");
         }}>
-        Send
+        {isPWA ? "📤" : "Send"}
       </button>
     </div>
   );

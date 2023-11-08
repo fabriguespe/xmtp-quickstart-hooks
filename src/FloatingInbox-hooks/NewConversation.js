@@ -2,17 +2,16 @@ import React, { useCallback } from "react";
 import { MessageInput } from "./MessageInput";
 import { useStartConversation } from "@xmtp/react-sdk"; // import the required SDK hooks
 
-const styles = {
-  messagesContainer: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "flex-end",
-    height: "100%",
-  },
-};
-
 export const NewConversation = ({ selectConversation, peerAddress }) => {
   const { startConversation } = useStartConversation();
+  const styles = {
+    messagesContainer: {
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "flex-end",
+      height: "100%",
+    },
+  };
 
   const handleSendMessage = useCallback(
     async (message) => {
@@ -28,7 +27,7 @@ export const NewConversation = ({ selectConversation, peerAddress }) => {
       const newConversation = await startConversation(peerAddress, message);
       selectConversation(newConversation?.cachedConversation);
     },
-    [peerAddress, startConversation, selectConversation],
+    [peerAddress, startConversation, selectConversation]
   );
 
   return (
