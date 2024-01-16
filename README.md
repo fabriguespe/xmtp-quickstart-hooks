@@ -9,7 +9,7 @@ bun start
 
 ## Concepts
 
-Head to our docs to understand our hooks concepts with our react SDK
+Head to our docs to understand XMTP's concepts
 
 - [Get started](https://xmtp.org/docs/build/get-started/overview?sdk=react)
 - [Authentication](https://xmtp.org/docs/build/authentication?sdk=react)
