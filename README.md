@@ -11,7 +11,7 @@ bun start
 
 Head to our docs to understand our hooks concepts with our react SDK
 
-- [Get started](https://xmtp.org/docs/build/get-started?sdk=react)
+- [Get started](https://xmtp.org/docs/build/get-started/overview?sdk=react)
 - [Authentication](https://xmtp.org/docs/build/authentication?sdk=react)
 - [Conversations](https://xmtp.org/docs/build/conversations?sdk=react)
 - [Messages](https://xmtp.org/docs/build/messages/?sdk=react)
