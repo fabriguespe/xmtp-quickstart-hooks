@@ -11,11 +11,11 @@ bun start
 
 Head to our docs to understand our hooks concepts with our react SDK
 
-- [Get started](https://xmtp.org/docs/build/get-started?tab=rn)
-- [Authentication](https://xmtp.org/docs/build/authentication?tab=rn)
-- [Conversations](https://xmtp.org/docs/build/conversations?tab=rn)
-- [Messages](https://xmtp.org/docs/build/messages/?tab=rn)
-- [Streams](https://xmtp.org/docs/build/streams/?tab=rn)
+- [Get started](https://xmtp.org/docs/build/get-started?sdk=rn)
+- [Authentication](https://xmtp.org/docs/build/authentication?sdk=rn)
+- [Conversations](https://xmtp.org/docs/build/conversations?sdk=rn)
+- [Messages](https://xmtp.org/docs/build/messages/?sdk=rn)
+- [Streams](https://xmtp.org/docs/build/streams/?sdk=rn)
 
 #### Troubleshooting
 

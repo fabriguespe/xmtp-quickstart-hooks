@@ -15,7 +15,6 @@ export const NewConversation = ({ selectConversation, peerAddress }) => {
 
   const handleSendMessage = useCallback(
     async (message) => {
-      console.log(message);
       if (!message.trim()) {
         alert("Empty message");
         return;
