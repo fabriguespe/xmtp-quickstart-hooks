@@ -136,11 +136,11 @@ export const ConversationContainer = ({
             selectConversation={setSelectedConversation}
             onConversationFound={(state) => {
               setConversationFound(state);
-              if (state == true) setCreateNew(false);
+              if (state === true) setCreateNew(false);
             }}
           />
           {message && conversationFound !== true && <small>{message}</small>}
-          {peerAddress && createNew && canMessage && (
+          {peerAddress && createNew && canMessage && !conversationFound && (
             <>
               <button
                 style={styles.createNewButton}

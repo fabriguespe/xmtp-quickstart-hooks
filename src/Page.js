@@ -120,7 +120,7 @@ const InboxPage = () => {
           Logout
         </button>
       )}
-      <h1>Floating Inbox </h1>
+      <h1>React Hooks Quickstart </h1>
 
       <section className="App-section">
         <button
