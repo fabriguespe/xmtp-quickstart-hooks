@@ -44,40 +44,49 @@ const MessageItem = ({ message, senderAddress, isPWA = false }) => {
       color: "grey",
     },
   };
+
+  const renderFooter = (timestamp) => {
+    return (
+      <div style={styles.footer}>
+        <span style={styles.timeStamp}>
+          {`${new Date(timestamp).getHours()}:${String(
+            new Date(timestamp).getMinutes()
+          ).padStart(2, "0")}`}
+        </span>
+      </div>
+    );
+  };
   const renderMessage = (message) => {
     try {
       if (message?.content.length > 0) {
-        return <div style={styles.renderedMessage}>{message?.content}</div>;
+        return (
+          <div style={styles.messageContent}>
+            <div style={styles.renderedMessage}>{message?.content}</div>
+            {renderFooter(message?.sentAt)}
+          </div>
+        );
       }
     } catch {
       return message?.fallbackContent ? (
-        message?.fallbackContent
-      ) : message?.contentFallback ? (
-        message?.contentFallback
-      ) : (
-        <div style={styles.renderedMessage}>{message?.content}</div>
-      );
+        <div style={styles.messageContent}>
+          <div style={styles.renderedMessage}>{message?.fallbackContent}</div>
+          {renderFooter(message?.sentAt)}
+        </div>
+      ) : null;
     }
   };
 
   const isSender = senderAddress === client?.address;
 
+  const MessageComponent = isSender ? "li" : "li";
+
   return (
-    <li
+    <MessageComponent
       style={isSender ? styles.senderMessage : styles.receiverMessage}
       key={message.id}
     >
-      <div style={styles.messageContent}>
-        {renderMessage(message)}
-        <div style={styles.footer}>
-          <span style={styles.timeStamp}>
-            {`${new Date(message.sentAt).getHours()}:${String(
-              new Date(message.sentAt).getMinutes()
-            ).padStart(2, "0")}`}
-          </span>
-        </div>
-      </div>
-    </li>
+      {renderMessage(message)}
+    </MessageComponent>
   );
 };
 export default MessageItem;
