@@ -79,7 +79,6 @@ export const ConversationContainer = ({
         setLoadingResolve(false);
       }
     }
-    console.log("resolvedAddress", resolvedAddress);
     if (resolvedAddress && isValidEthereumAddress(resolvedAddress)) {
       processEthereumAddress(resolvedAddress);
       setSearchTerm(resolvedAddress); // <-- Add this line

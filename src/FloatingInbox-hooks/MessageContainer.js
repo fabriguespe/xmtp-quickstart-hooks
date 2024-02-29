@@ -1,4 +1,10 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  useMemo,
+} from "react";
 import { MessageInput } from "./MessageInput";
 import {
   useMessages,
@@ -18,6 +24,21 @@ export const MessageContainer = ({
   const { client } = useClient();
   const { messages, isLoading } = useMessages(conversation);
   const [streamedMessages, setStreamedMessages] = useState([]);
+
+  const combinedMessages = useMemo(() => {
+    const messageMap = new Map();
+
+    messages.forEach((message) => {
+      messageMap.set(message.id, message);
+    });
+
+    streamedMessages.forEach((message) => {
+      messageMap.set(message.id, message);
+    });
+
+    // Convert the map back into an array of messages.
+    return Array.from(messageMap.values());
+  }, [messages, streamedMessages]);
 
   const styles = {
     messagesContainer: {
@@ -44,6 +65,7 @@ export const MessageContainer = ({
 
   const onMessage = useCallback(
     (message) => {
+      console.log("onMessage", message.content);
       setStreamedMessages((prev) => [...prev, message]);
     },
     [streamedMessages]
@@ -69,7 +91,7 @@ export const MessageContainer = ({
   useEffect(() => {
     if (!isContained)
       messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [streamedMessages]);
 
   return (
     <div style={styles.messagesContainer}>
@@ -78,7 +100,7 @@ export const MessageContainer = ({
       ) : (
         <>
           <ul style={styles.messagesList}>
-            {messages.slice().map((message) => {
+            {combinedMessages.slice().map((message) => {
               return (
                 <MessageItem
                   isPWA={isPWA}

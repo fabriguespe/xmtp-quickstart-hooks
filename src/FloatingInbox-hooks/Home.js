@@ -160,7 +160,6 @@ export default function Home({
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const signer = provider.getSigner();
         setSigner(signer);
-        console.log("Your address", signer.address);
         setIsConnected(true);
       } catch (error) {
         console.error("User rejected request", error);

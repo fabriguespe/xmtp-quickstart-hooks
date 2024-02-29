@@ -57,12 +57,13 @@ const MessageItem = ({ message, senderAddress, isPWA = false }) => {
     );
   };
   const renderMessage = (message) => {
+    const date = message.sentAt ? message.sentAt : message.sent;
     try {
       if (message?.content.length > 0) {
         return (
           <div style={styles.messageContent}>
             <div style={styles.renderedMessage}>{message?.content}</div>
-            {renderFooter(message?.sentAt)}
+            {renderFooter(date)}
           </div>
         );
       }
@@ -70,7 +71,7 @@ const MessageItem = ({ message, senderAddress, isPWA = false }) => {
       return message?.fallbackContent ? (
         <div style={styles.messageContent}>
           <div style={styles.renderedMessage}>{message?.fallbackContent}</div>
-          {renderFooter(message?.sentAt)}
+          {renderFooter(date)}
         </div>
       ) : null;
     }
